@@ -9,7 +9,9 @@ height: 900
 ```{r,echo=FALSE}
 library(magrittr)
 library(dplyr)
-knitr::opts_chunk$set(fig.align="cent", message=FALSE)
+knitr::opts_chunk$set(fig.align="cent", 
+                      fig.path="www/figure/main-",
+                      message=FALSE)
 ```
 
 

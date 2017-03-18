@@ -107,7 +107,7 @@ mod
 -------- mrgsolve model object (unix) --------
   Project: /Users/kyleb/Rlibs/lib/mrgsolve/models
   source:        irm2.cpp
-  shared object: irm2-so-d8042b19397e 
+  shared object: irm2-so-e5ef41669de7 
 
   compile date:  
   Time:          start: 0 end: 24 delta: 1
@@ -141,7 +141,7 @@ out <-
 plot(out,EV1+CP+RESP~.)
 ```
 
-<img src="main-figure/unnamed-chunk-5-1.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" style="display: block; margin: auto;" />
+<img src="www/figure/main-unnamed-chunk-5-1.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" style="display: block; margin: auto;" />
 
 
 Population simulation
@@ -156,7 +156,7 @@ mod <- mread("popex", modlib())
 mod %>% ev(amt=100) %>% mrgsim(end=96,nid=20) %>% plot(DV+CL+V~.)
 ```
 
-<img src="main-figure/unnamed-chunk-7-1.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" style="display: block; margin: auto;" />
+<img src="www/figure/main-unnamed-chunk-7-1.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" style="display: block; margin: auto;" />
 
 Get started with mrgsolve
 ==============================
