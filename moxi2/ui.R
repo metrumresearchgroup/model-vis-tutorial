@@ -18,10 +18,10 @@ pick_row_1b <- box(pick_mic,pick_pathogen, width=2)
 foot_row_1 <- 'Gram positive: fAUC/MIC target is 30 and Gram negative fAUC/MIC target is 100.'
 
 ## Data input - lower row
-pick_row_2 <- box(pick_wt, pick_ht,br(), width=2, footer="Both weight and height are drawn from uniform distirbution.")
+pick_row_2 <- box(pick_wt, pick_ht,br(), width=2, 
+                  footer="Both weight and height are drawn from uniform distirbution.")
 
 ## Dashboard Title Row
-
 url <- "https://www.ncbi.nlm.nih.gov/pubmed/25600294"
 cite <- "Wicha SG et al. J Clin Pharmacol. 2015 Jun;55(6):639-46. PubMed PMID: 25600294."
 link <- a(href=url,target="_blank",cite)
