@@ -1,0 +1,91 @@
+---
+title: "Explore Shiny+mrgsolve"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: united
+runtime: shiny
+---
+```{r global}
+library(mrgsolve)
+library(dplyr)
+library(shiny)
+mod <- mrgsolve:::house()
+
+```
+
+
+
+# Example {.sidebar}
+```{r}
+library(shiny)
+sliderInput("cl", "Clearance", min=0.2,max=2,step=0.2, value=1)
+sliderInput("vc", "Volume", min=5, max=50, value=20, step=5)
+textInput("title", "Title")
+selectizeInput("linetype", "Line type", choices = list(solid=1,dashed=2,dotted=3))
+selectizeInput("dose", "Dose (mg)", choices=seq(100,1000,100),selected=300,multiple=TRUE)
+dateInput("date", "Date")
+actionButton("go", "Go")
+
+sim <- reactive({
+  mod %>%
+    data_set(data()) %>%
+    param(CL = as.numeric(input$cl), VC = as.numeric(input$vc)) %>% 
+    mrgsim(digits=3)
+ 
+})
+
+data <- reactive({
+  expand.ev(amt=as.numeric(input$dose), ii=24, addl=2)
+})
+```
+
+# Server Tab 1
+
+## Column 1
+
+### Plot one
+
+```{r}
+renderPlot({
+
+  plot(sim(),CP~.,
+       main=input$title,
+       lty=as.integer(input$linetype),
+       xlab=paste0("Go ", input$go, " ", as.character(input$date)))
+})
+```
+
+### Table one
+
+```{r}
+renderTable({
+  return(head(mrgsolve::as.data.frame(sim())))
+})
+```
+
+# Server Tab 2
+
+## Column
+
+### Plot two
+
+```{r}
+sim2 <- eventReactive(input$go, sim(),ignoreNULL=FALSE)
+```
+
+```{r}
+renderPlot({
+   plot(sim2(),CP~.,
+       main=input$title,
+       lty=as.integer(input$linetype),
+       xlab=paste0("Go ", input$go, " ", as.character(input$date)))
+})
+```
+
+### Table two
+
+```{r}
+renderTable({
+  return(head(mrgsolve::as.data.frame(sim2())))
+})
+```

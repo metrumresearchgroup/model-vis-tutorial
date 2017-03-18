@@ -1,0 +1,109 @@
+Moxifloxacin_PK_diabetic_foot_infections_dat = dataObj {
+	DECLARED_VARIABLES{CP_obs CENTRAL PERIPHERAL}
+	DATA_INPUT_VARIABLES{
+		ID   : {use is id}
+		TIME : {use is idv}
+		DV   : {use is dv, variable=CP_obs}
+		AMT  : {use is amt, define={1 in CMT as CENTRAL, 2 in CMT as PERIPHERAL}}
+		RATE : {use is rate}
+		MDV  : {use is mdv}
+		EVID : {use is ignore}
+		CMT  : {use is cmt}
+		WGT  : {use is covariate}
+		IBW  : {use is covariate}
+	}
+	SOURCE{
+		myData: {
+		file="Simulated_Moxifloxacin-PK_diabetic-foot-infections-simdata.csv",
+		inputFormat is nonmemFormat}
+	}
+}
+Moxifloxacin_PK_diabetic_foot_infections_par = parObj{
+	STRUCTURAL {
+		#THETA
+		POP_CL: {value=1.21E+01}
+		POP_V1: {value=6.81E+01}
+		POP_Q: {value=2.03E+01}
+		POP_V2: {value=4.46E+01}
+		#SIGMA
+		RUV_PROP: {value=3.40E-02}
+		RUV_ADD: {value=4.65E-03}
+	}
+	VARIABILITY {
+		#OMEGA
+		PPV_CL: {value=6.33E-02, type is var}
+		PPV_V1: {value=7.25E-02, type is var}
+	}
+}
+Moxifloxacin_PK_diabetic_foot_infections_mdl = mdlObj {
+	IDV{TIME}
+	COVARIATES {
+		WGT
+		IBW
+	}
+	VARIABILITY_LEVELS {
+		ID: {type is parameter, level=2}
+		DV: {type is observation, level=1}
+	}
+	STRUCTURAL_PARAMETERS {
+		#THETA
+		POP_CL
+		POP_V1
+		POP_Q
+		POP_V2
+		#SIGMA
+		RUV_PROP
+		RUV_ADD
+	}
+	VARIABILITY_PARAMETERS {
+		#OMEGA
+		PPV_CL
+		PPV_V1
+	}
+	GROUP_VARIABLES {
+		TVCL  = POP_CL
+		ASCCL = TVCL * (IBW/70)^0.75
+		TVV1  = POP_V1
+		ASCV1 = TVV1 * (WGT/70)^1
+		Q     = POP_Q
+		TVV2  = POP_V2
+		ASCV2 = TVV2 * (WGT/70)^1
+	}
+	RANDOM_VARIABLE_DEFINITION (level=ID) {
+		eta_PPV_CL ~ Normal(mean=0, var=PPV_CL)
+		eta_PPV_V1 ~ Normal(mean=0, var=PPV_V1)
+	}
+	RANDOM_VARIABLE_DEFINITION (level=DV) {
+		eps_RUV ~ Normal(mean=0, var=1)
+	}
+	INDIVIDUAL_VARIABLES {
+		ln(CL) = linear( trans is ln, pop = ASCCL, ranEff = [eta_PPV_CL] )
+		ln(V1) = linear( trans is ln, pop = ASCV1, ranEff = [eta_PPV_V1] )
+		V2 = ASCV2
+		#S1 = V1
+	}
+	MODEL_PREDICTION {
+		COMPARTMENT {
+			CENTRAL    : {type is compartment, modelCmt=1}
+			          :: {type is elimination, modelCmt=1, from=CENTRAL, v=V1, cl=CL}
+			PERIPHERAL : {type is distribution, modelCmt=2, from=CENTRAL, kin=Q/V1, kout=Q/V2}
+		}
+		CP = CENTRAL/V1
+	}
+	OBSERVATION {
+		CP_obs = combinedError1( additive = RUV_ADD, proportional = RUV_PROP, eps = eps_RUV, prediction = CP )
+	}
+}
+Moxifloxacin_PK_diabetic_foot_infections_task = taskObj {
+	ESTIMATE {
+		set algo is focei
+	}
+}
+Moxifloxacin_PK_diabetic_foot_infections_mog=mogObj {
+	OBJECTS {
+		Moxifloxacin_PK_diabetic_foot_infections_mdl  : { type is mdlObj }
+		Moxifloxacin_PK_diabetic_foot_infections_dat  : { type is dataObj }
+		Moxifloxacin_PK_diabetic_foot_infections_par  : { type is parObj }
+		Moxifloxacin_PK_diabetic_foot_infections_task : { type is taskObj }
+	}
+}

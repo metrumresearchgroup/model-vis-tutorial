@@ -1,0 +1,63 @@
+---
+title: "Explore Shiny+mrgsolve"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: united
+runtime: shiny
+---
+```{r global}
+library(mrgsolve)
+library(dplyr)
+library(shiny)
+mod <- mrgsolve:::house()
+
+```
+
+# Example {.sidebar}
+```{r}
+library(shiny)
+# Title: My Plot
+# CL 0.2-2 by 0.2 start: 1
+# VC 5-50 by 20 start: 5
+# Select: linetype solid, dashed, dotted
+# Select: dose 100 to 1000 by 100 start: 300
+# Select: date
+# Go button
+
+sim <- reactive({
+  mod %>%
+    data_set(data()) %>%
+    param(CL = 1, VC = 20) %>% 
+    mrgsim(digits=3)
+ 
+})
+
+data <- reactive({
+  expand.ev(amt=100, ii=24, addl=2)
+})
+```
+
+# Server Tab 1
+
+## Column 1
+
+### Plot one
+
+```{r}
+renderPlot({
+
+  plot(sim(),
+       CP~.,
+       main="My Plot",
+       lty=1,
+       xlab="Go / date")
+})
+```
+
+### Table one
+
+```{r}
+renderTable({
+  return(head(mrgsolve::as.data.frame(sim())))
+})
+```

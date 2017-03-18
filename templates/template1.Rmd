@@ -1,0 +1,41 @@
+---
+title: "Explore Shiny + mrgsolve"
+output: flexdashboard::flex_dashboard
+runtime: shiny
+---
+
+
+```{r global}
+
+```
+
+
+# Controls {.sidebar}
+```{r}
+library(shiny)
+
+
+```
+
+# Server Tab 1
+```{r}
+
+```
+
+# Server Tab 2
+
+## Column
+
+### One output
+```{r}
+
+
+```
+
+### Another output
+```{r}
+
+```
+
+
+

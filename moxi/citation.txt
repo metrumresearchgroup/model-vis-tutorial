@@ -1,0 +1,39 @@
+http://repository.ddmore.eu/model/DDMODEL00000034#Overview
+https://www.ncbi.nlm.nih.gov/pubmed/25600294
+
+
+1. J Clin Pharmacol. 2015 Jun;55(6):639-46. doi: 10.1002/jcph.464. Epub 2015 Feb 13.
+
+Population pharmacokinetics and target attainment analysis of moxifloxacin in
+patients with diabetic foot infections.
+
+Wicha SG(1), Haak T, Zink K, Kees F, Kloft C, Kees MG.
+
+Author information: 
+(1)Department of Clinical Pharmacy and Biochemistry, Institute of Pharmacy,
+Freie Universitaet Berlin, Berlin, Germany.
+
+The objective of this study was to provide a pharmacokinetic/pharmacodynamic
+(PK/PD) analysis of moxifloxacin in patients with diabetic foot infections (DFI).
+The plasma concentration-time courses were determined in 50 DFI patients on day 1
+and 3 after intravenous moxifloxacin 400 mg once-daily. A two-compartment
+population pharmacokinetic model was developed, identifying as covariates total
+body weight on central and peripheral volume of distribution (V1, V2) and ideal
+body weight on clearance (CL), respectively. For a 70 kg patient V1 was 68.1 L
+(interindividual variability, CV: 27.4%), V2 44.6 L, and CL 12.1 L/h (25.6%).
+Simulations were performed to calculate the probability of target attainment
+(PTA) for Gram-positive and Gram-negative pathogens with fAUC/MIC targets of >= 30 
+and ≥100, respectively. PTA was 0.68-1 for susceptible (MIC <= 0.5 mg/L according
+to EUCAST) Gram-positive, but < 0.25 for Gram-negative pathogens with MIC
+ >= 0.25 mg/L. With the exception of the first 24 hours of therapy, obesity affected
+PTA only marginally. Pharmacokinetic parameters in DFI patients were similar to
+those reported for healthy volunteers, indicating the appropriateness of the
+standard dose of moxifloxacin. Overall clinical efficacy has been shown
+previously, but PTA is limited in a subpopulation infected with formally
+susceptible Gram-negative pathogens close to the EUCAST breakpoint.
+
+(@) 2015, The American College of Clinical Pharmacology.
+
+DOI: 10.1002/jcph.464 
+PMID: 25600294  [PubMed - indexed for MEDLINE]
+
