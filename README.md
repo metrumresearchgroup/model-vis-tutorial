@@ -39,3 +39,7 @@ Shiny apps, which can be further tailored with mrgsolve, can be shared with end 
   equations.  This model also includes AUC from time 0-24 and 48-72 in the simulated output.
   - `pkgSetup.R` and `R` script that installs packages from source 
 
+## Apps
+- Moxifloxacin PK in diabetic foot infection: http://metrumrg.shinyapps.io/moxi
+- Therapeutic drug monitoring: http://metrumrg.shinyapps.io/tdmdosing
+- Get started with `mrgsolve` + `shiny`: http://metrumrg.shinyapps.io/getstarted
