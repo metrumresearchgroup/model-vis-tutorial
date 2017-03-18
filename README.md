@@ -27,6 +27,8 @@ Shiny apps, which can be further tailored with mrgsolve, can be shared with end 
   - Discussion / Q&A time
 
 ## Content
+  - `main.md` the main presentation in `.md` format
+  - `main.Rpres` the main presentation in `.Rpres` format
   - `templates/` a directory with templates you can use for your next project
   - `moxi2/` the moxifloxacin PK dashboard app developed during the tutorial
   - `pkg/` `R` packages used in the tutorial; note: all packages are provided as source code; appropriate compilers
