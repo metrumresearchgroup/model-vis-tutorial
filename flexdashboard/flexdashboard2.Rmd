@@ -9,16 +9,16 @@ runtime: shiny
 library(mrgsolve)
 library(dplyr)
 library(shiny)
-mod <- mrgsolve:::house()
-
+mod <- 
+  mread_cache("irm1", modlib()) %>% 
+  update(end=120,delta=0.25)
 ```
 
 
 
 # Example {.sidebar}
 ```{r}
-library(shiny)
-sliderInput("cl", "Clearance", min=0.2,max=2,step=0.2, value=1)
+sliderInput("cl", "Clearance", min=0.2,max=3,step=0.25, value=1)
 sliderInput("vc", "Volume", min=5, max=50, value=20, step=5)
 textInput("title", "Title")
 selectizeInput("linetype", "Line type", choices = list(solid=1,dashed=2,dotted=3))

@@ -5,17 +5,19 @@ output:
     theme: united
 runtime: shiny
 ---
+
 ```{r global}
 library(mrgsolve)
 library(dplyr)
 library(shiny)
-mod <- mrgsolve:::house()
-
+mod <- 
+  mread_cache("irm1", modlib()) %>% 
+  update(end=120,delta=0.25)
 ```
+
 
 # Example {.sidebar}
 ```{r}
-library(shiny)
 # Title: My Plot
 # CL 0.2-2 by 0.2 start: 1
 # VC 5-50 by 20 start: 5
@@ -24,17 +26,7 @@ library(shiny)
 # Select: date
 # Go button
 
-sim <- reactive({
-  mod %>%
-    data_set(data()) %>%
-    param(CL = 1, VC = 20) %>% 
-    mrgsim(digits=3)
- 
-})
 
-data <- reactive({
-  expand.ev(amt=100, ii=24, addl=2)
-})
 ```
 
 # Server Tab 1
@@ -44,9 +36,19 @@ data <- reactive({
 ### Plot one
 
 ```{r}
-renderPlot({
 
-  plot(sim(),
+# Is this a good idea?
+renderPlot({
+  
+  e <- expand.ev(amt=100, ii=24, addl=2)  
+  
+  out <- 
+    mod %>%
+    data_set(e) %>%
+    param(CL = 1, VC = 20) %>% 
+    mrgsim(digits=3)
+  
+  plot(out,
        CP~.,
        main="My Plot",
        lty=1,
@@ -58,6 +60,14 @@ renderPlot({
 
 ```{r}
 renderTable({
-  return(head(mrgsolve::as.data.frame(sim())))
+  e <- expand.ev(amt=100, ii=24, addl=2)  
+  
+  out <- 
+    mod %>%
+    data_set(e) %>%
+    param(CL = 1, VC = 20) %>% 
+    mrgsim(digits=3)
+  
+  return(mrgsolve:::as.data.frame(head(out)))
 })
 ```
