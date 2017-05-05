@@ -1,0 +1,472 @@
+---
+title: "Developing Interactive Visualization Tools for Model-Supported R&D"
+output: 
+  beamer_presentation:
+    theme: boxes
+    fig_width: 4
+    fig_height: 3
+    includes:
+      in_header: "mrgbeam.tex"
+---
+
+```{r,echo=FALSE,message=FALSE}
+knitr::opts_chunk$set(comment='.', message=FALSE)
+library(dplyr)
+library(magrittr)
+library(dmutate)
+```
+
+
+
+Outline
+===========
+
+- Where we're heading: moxifloxacin PK dashboard app 
+
+- Some `mrgsolve`
+
+- Some `Shiny`
+
+- Create a simple app to explore the moxi model
+
+- Review the moxi dashboard app
+
+- Deploy the moxi app on Metworx Envision
+
+- Look at other apps for clinical decision-making
+
+- Metworx Envison hands-on
+
+
+Moxifloxacin dashboard app
+==================================
+- https://metrumrg.shinyapps.io/moxi
+- [Moxifloxacin PK in diabetic foot infection](http://repository.ddmore.eu/model/DDMODEL00000034)
+- Proposed dose: 400 mg IV Q24h
+
+
+Decision questions
+==================================
+- Under the proposed dose, what is the highest MIC we can expect to cover?
+   - \redb{M}inimum \redb{I}nhibitory \redb{C}oncentration
+   - Gram positive bacteria
+   - Gram negative bacteria
+- What is the expected efficacy?
+  - AUC/MIC ratio
+      - After first dose
+      - After third dose
+- How does patient body size affect expected efficacy?
+  - Weight / BMI
+
+
+To answer these questions, we need ...
+============================================
+- Moxifloxacin population PK model
+    - Day 1 and day 3 AUC
+    - Loading and maintenance doses
+   - Fraction unbound
+- Simulate populations
+    - Different body-size distribution
+- Summaries by several factors
+    - Bacteria type
+    - MIC
+  
+A dashboard gives access to decision makers
+==========================================
+- Real-time updates based on decision-maker input
+- Let decision makers
+    - interact with the model
+    - explore the scenarios of their choosing
+    - answer questions as the discussion develops
+- Does not require any technical skill or modeling background
+
+
+
+What we need for the dashboard
+========================================
+- Moxifloxacin PK model in agile format
+    - Needs to be quick
+    - Clean implementation
+    - Accessible / portable
+- User interface
+    - Allow user input
+    - Display simulation results
+    - Easy to understand / navigate
+- Some code that turns user input into desired results
+
+
+mrgsolve in brief
+=======================
+
+```{r,message=FALSE}
+library(mrgsolve)
+mod <- mread_cache("irm2", modlib())
+```
+
+```{r}
+mod
+```
+
+Simulate a dosing regimen
+===============
+```{r, fig.width=4,fig.height=3}
+out <- 
+  mod %>% 
+  param(KOUT=0.2,IC50=2) %>%
+  ev(amt=400,ii=24, addl=4) %>% 
+  mrgsim(end=240, delta=0.1)
+```
+
+***
+```{r,fig.align="center",fig.width=4}
+plot(out,EV1+CP+RESP~.)
+```
+
+
+Population simulation
+===============
+```{r}
+mod <- mread("popex", modlib())
+```
+
+```{r}
+cov1 <- covset(WT~rnorm(80,30),SEX~rbinomial(0.4))
+idata <- data_frame(ID=1:25) %>% mutate_random(cov1) 
+
+head(idata,n=3)
+
+out <- mod %>% ev(amt=100) %>% mrgsim(end=96,idata=idata)
+```
+
+***
+```{r,fig.width=3,fig.align="center"}
+plot(out,DV~.)
+```
+
+Get started with mrgsolve
+==============================
+- [mrgsolve.github.io](https://mrgsolve.github.io)
+
+
+Moxifloxacin model
+=======================
+- Let's do side-by-side conversion from NONMEM control stream
+- Model downloaded from DDMoRe model repository
+    - http://repository.ddmore.eu/model/DDMODEL00000034
+- First, do a one-to-one conversion
+    - Model amounts computed in closed form (like ADVAN2/ADVAN4)
+- Then, code an ODE-based version
+    - This let's us get the day 1 and 3 `AUC` values we need for the dashboard
+ 
+
+$PROBLEM
+=============
+
+\dsbb{NONMEM}
+```{r,eval=FALSE}
+;; 1. Based on: run021
+;; 2. Description: PK of moxifloxacin in patients with diabetic foot infections
+;; x1. Author: Sebastian G. Wicha, Freie Universitaet Berlin, Germany
+;; 3. Label:
+$PROBLEM PK
+```
+
+\redb{mrgsolve}
+```{r,eval=FALSE}
+$PROB
+# Wicha et al. 2015
+- Moxifloxacin PK in diabetic foot infection
+- Author: Sebastian G. Wicha, Freie Universitaet Berlin, Germany
+- https://www.ncbi.nlm.nih.gov/pubmed/25600294
+```
+
+$INPUT
+=======
+\dsbb{NONMEM}
+```{r,eval=FALSE}
+$INPUT ID TIME DV AMT RATE MDV EVID CMT WGT IBW 
+```
+
+\redb{mrgsolve}
+```{r,eval=FALSE}
+$PARAM WGT = 70, IBW = 70, fu = 0.6
+```
+
+
+$DATA
+=======
+
+
+\dsbb{NONMEM}
+```{r,eval=FALSE}
+$DATA MOX02_sim.csv ; IGNORE=#
+```
+\redb{mrgsolve}
+```{r,eval=FALSE}
+## Not required
+```
+
+- `mrgsolve` will work with your NONMEM data set
+- Pass in as `R` data frame
+
+
+$SUBROUTINES
+=======
+
+
+\dsbb{NONMEM}
+```{r,eval=FALSE}
+$SUBROUTINES ADVAN3 TRANS4
+```
+
+
+\redb{mrgsolve}
+```{r,eval=FALSE}
+$PKMODEL cmt="CENT PERIPH"
+```
+
+$PK
+=======
+
+
+\dsbb{NONMEM}
+```{r,eval=FALSE}
+$PK
+TVCL  = THETA(1) 
+ASCCL = TVCL * (IBW/70)**0.75
+CL    = ASCCL * EXP(ETA(1))\
+TVV1  = THETA(2) 
+ASCV1 = TVV1 * (WGT/70)**1
+V1    = ASCV1 * EXP(ETA(2))
+Q  = THETA(3) 
+TVV2 = THETA(4)
+ASCV2 = TVV2 * (WGT/70)**1
+V2    = ASCV2 
+S1 = V1
+```
+
+***
+\redb{mrgsolve}
+```{r,eval=FALSE}
+$MAIN
+double TVCL  = THETA1;
+double ASCCL = TVCL*pow(IBW/70,0.75);
+double CL    = ASCCL*exp(ETA(1));
+
+double TVV1  = THETA2;
+double ASCV1 = TVV1*WGT/70.0;
+double V1    = ASCV1*exp(ETA(2));
+
+double Q = THETA3;
+
+double TVV2  = THETA4;
+double ASCV2 = TVV2*WGT/70.0;
+double V2    = ASCV2;
+```
+
+
+
+
+$ERROR
+=======
+
+
+\dsbb{NONMEM}
+```{r,eval=FALSE}
+IPRED = F
+DEL   = 0
+IF (IPRED.EQ.0) DEL=0.0001
+W     = F
+Y     = F+F*EPS(1)+EPS(2)
+IRES  = DV-IPRED
+IWRES = IRES/(W+DEL)
+```
+
+***
+\redb{mrgsolve}
+```{r,eval=FALSE}
+$TABLE
+capture IPRED = CENT/V1;
+double  DV = IPRED*(1+EPS(1)) + EPS(2);
+
+capture fIPRED = fu*IPRED;
+capture fDV = fu*DV;
+
+$CAPTURE DV
+```
+
+
+$THETA, $OMEGA, $SIGMA
+=======
+
+
+\dsbb{NONMEM}
+```{r,eval=FALSE}
+$THETA
+1.21E+01 ; CL
+6.81E+01 ; V1
+2.03E+01 ; Q
+4.46E+01 ; V2
+
+$OMEGA
+6.33E-02        ; CL
+7.25E-02        ; V1
+
+$SIGMA
+3.40E-02 ; Prop 
+4.65E-03 ; Add
+```
+
+***
+\redb{mrgsolve}
+```{r,eval=FALSE}
+$THETA
+1.21E+01
+6.81E+01
+2.03E+01
+4.46E+01
+
+$OMEGA
+6.33E-02
+7.25E-02
+
+$SIGMA
+3.40E-02
+4.65E-03
+```
+
+No equivalent
+=======
+
+
+\dsbb{NONMEM}
+```{r,eval=FALSE}
+$EST METHOD=1 INTER MAXEVAL=0 
+NOABORT SIG=3 PRINT=1 POSTHOC
+;$COV
+```
+
+\redb{mrgsolve}
+```{r,eval=FALSE}
+$SET delta=0.1, end=24*3
+```
+
+- Easy to simulate at the times you want observations
+- `mrgsolve` itself doesn't not generate estimates; but
+it may be used as a part of optimization process in `R`
+
+Let's expand the mrgsolve model
+========
+- Differential equations
+- Calculate AUC0-24 and AUC48-72
+
+
+Develop R code for moxi sims
+===============================
+- Need cohort with 1000 patients
+- Covariates
+    - Weight, height,SEX (IBW,BMI)
+- Dosing
+    - 400 mg IV Q24h
+    - Option for loading dose (hypothetical)
+- Simulate out to day 3
+
+Introduce dmutate package
+=========
+- [https://cran.r-project.org/package=dmutate](https://cran.r-project.org/package=dmutate)
+- Quickly simulate variates
+     - any distribution at any level 
+     - bounds 
+- Specified as formula
+- Collect in sets
+
+dmutate example
+=====================
+```{r}
+library(dmutate)
+muwt <- 90
+sdwt <- 90
+pfe <- 0.65
+```
+
+```{r}
+cov1 <- covset(WT[40,140] ~ rnorm(muwt,sdwt)|ID,
+               SEX ~ rbinomial(pfe)|ID)
+```
+```{r}
+cov1
+```
+
+***
+```{r}
+set.seed(1133)
+data_frame(ID=1:25) %>% mutate_random(cov1)
+```
+
+***
+```{r}
+data(exTheoph)
+
+exTheoph %<>% mutate_random(cov1)
+
+head(exTheoph)
+
+```
+
+
+Shiny
+====================
+- A huge topic; we will just scratch the surface
+- Developed by Rstudio + lots of contributors
+- The place to start: http://shiny.rstudio.com/
+    - Tutorials, galleries, articles, example code
+
+
+Elements of Shiny
+====================
+- Two main elements to shiny app
+    - User interface (UI, `ui.R`)
+    - Server (`server.R`)
+- User interface
+    - Data input (widgets: text, numeric, select, checkbox)
+    - Return data (plots, tables, text)
+    - Layout (fluidPage, tabSet)
+- Server
+    - All computations
+    - Generate outputs to be displayed in UI
+    - Largely plain old `R` code written in server environment
+- Reactivity
+
+Explore Shiny with a flexdashboard
+====================================
+- Interactive Rmarkdown document
+    - Define some inputs 
+    - Return some outputs
+- flexdashboard puts it all together for you
+    - Widgets (input)
+    - Render (output)
+    - Reactivity
+    - Control reactivity with action button
+
+
+Recommend shinydashboard as environment for your app
+===============================
+- https://rstudio.github.io/shinydashboard/
+- Similar concept to flexdashboard
+- Menu bar on the left
+    - Add submenus
+- Main app space on the right
+    - Arrange with boxes
+    - Add tabsets
+
+
+Let's take a look at the Moxifloxacin code
+============================================
+- `./moxi2/ui.R` and `./moxi2/server.R`
+
+
+
+
+
+
+

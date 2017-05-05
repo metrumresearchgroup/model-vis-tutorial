@@ -1,0 +1,109 @@
+\usepackage{textpos}
+%\usepackage{helvet}
+
+\setbeamertemplate{blocks}[rounded][shadow=false]
+
+\usepackage[T1]{fontenc}
+\usepackage[sc]{mathpazo}
+%\linespread{1.05}         % Palatino needs more leading (space between lines)
+
+% The beamer theme
+%\usetheme{CambridgeUS}
+%\usetheme{Boadilla}
+\usetheme{boxes}
+%\setbeamerfont{frametitle}{size={\fontsize{14}{16}}}
+\definecolor{mrggreen}{RGB}{19, 152, 4}
+\definecolor{mrggreen2}{RGB}{0, 102, 0}
+\definecolor{myred}{rgb}{0.714,0.122,0.094}
+\definecolor{darkslateblue}{RGB}{72, 61, 139}
+% MRG color for structural elements
+%\usecolortheme{default}
+
+% Custom colors for alerts and examples
+%\setbeamercolor{alerted text}{fg=red!95!black}
+%\setbeamercolor{example text}{fg=blue!60!white}
+%
+\setbeamercolor{palette primary}{fg=mrggreen2}
+\setbeamercolor{palette secondary}{fg=mrggreen2}
+\setbeamercolor{palette tertiary}{bg=mrggreen}
+%\setbeamercolor{palette quaternary}{fg=black,bg=white}
+
+\setbeamercolor*{structure}{fg=mrggreen2}
+\setbeamercolor{titlelike}{fg=black,bg=black!2!white}
+
+\setbeamercolor{block title}{use=structure,fg=white,bg=mrggreen}
+\setbeamercolor{block body}{use=structure,fg=black,bg=black!5!white}
+\setbeamercolor{block title alerted}{use=alerted text,fg=white,bg=alerted text.fg!75!black}
+\setbeamercolor{block body alerted}{bg=black!5!white}
+\setbeamercolor{block title example}{use=example text,fg=white,bg=blue!50!black}
+\setbeamercolor{block body example}{use=structure,fg=black,bg=black!5!white}
+\setbeamercolor{frametitle}{fg=mrggreen,bg=black!10!white}
+
+% Copyright in footer
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\copyright \number \year\ \insertshortinstitute
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+    \insertframenumber{} / \inserttotalframenumber\hspace*{2ex} 
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+% \pgfdeclareimage[height=0.2787cm, width=2.5cm]{logo}{logo.pdf}
+% \logo{\pgfuseimage{logo}}
+\title{mrgsolve \ \  workshop@merck \ \  Lebanon, NJ} 
+%  \author{Kyle Baron, PharmD, PhD} 
+\institute{Metrum Research Group LLC}
+\date{5/25/2016} 
+
+\newcommand{\stcolums}{\begin{columns}}
+\newcommand{\fincolums}{\end{columns}}
+\newcommand{\stcolum}{\begin{column}}
+\newcommand{\fincolum}{\end{column}}
+\newcommand{\stblock}{\begin{block}}
+\newcommand{\finblock}{\end{block}}
+\newcommand{\red}[1]{\textcolor{myred}{\tt #1}}
+\newcommand{\redtt}[1]{\textcolor{myred}{\texttt{\textbf{#1}}}}
+\newcommand{\redb}[1]{\red{{\bf #1}}}
+\newcommand{\grb}[1]{\textcolor{mrggreen}{\bf #1}}
+\newcommand{\ttg}[1]{\textcolor{mrggreen}{\bf \tt #1}}
+\newcommand{\ttgb}[1]{\textcolor{mrggreen}{\texttt{\textbf{#1}}}}
+\newcommand{\mrgsolve}{\ttg{mrgsolve}}
+\newcommand{\ttdsb}[1]{\textcolor{darkslateblue}{\texttt{\textbf{#1}}}}
+\newcommand{\dsbb}[1]{\textcolor{darkslateblue}{\textbf{#1}}}
+\newcommand{\blkb}[1]{\textcolor{black}{\textbf{#1}}}
+
+
+\newcommand{\welcometitle}[1]{
+\vskip 1cm
+\centerline{\includegraphics[width=5cm]{docs/src/img/logo}}
+\vskip 1cm
+\centerline{\LARGE{\textcolor{mrggreen}{\tt mrgsolve}: #1}}
+
+\vskip 2.2cm
+
+ \centerline{\textcolor{mrggreen2}{{\tt mrgsolve} Workshop -at- Merck}}
+ \centerline{\today}
+}
+\newcommand{\mytitle}[1]{
+\vskip 1cm
+\centerline{\includegraphics[width=5cm]{img/logo}}
+\vskip 1cm
+\centerline{\LARGE{\textcolor{mrggreen}{\tt mrgsolve}: #1}}
+
+\vskip 2.2cm
+
+ \centerline{\textcolor{mrggreen2}{{\tt mrgsolve} Workshop -at- Merck}}
+ \centerline{\today}
+}
+
+%\setbeamertemplate{blocks}[rounded]
+%\setbeamertemplate{title page}[default][colsep=-4bp,rounded=true]
