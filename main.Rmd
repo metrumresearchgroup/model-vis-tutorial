@@ -92,7 +92,7 @@ What we need for the dashboard
     - Allow user input
     - Display simulation results
     - Easy to understand / navigate
-- Some code that turns user input into desired results
+- Other `R` code to turn user input into desired results
 
 
 mrgsolve in brief
@@ -192,6 +192,8 @@ $INPUT ID TIME DV AMT RATE MDV EVID CMT WGT IBW
 $PARAM WGT = 70, IBW = 70, fu = 0.6
 ```
 
+- We tell `mrgsolve` what columns to look for
+- Every data item has a "default" value
 
 $DATA
 =======
@@ -225,6 +227,10 @@ $SUBROUTINES ADVAN3 TRANS4
 $PKMODEL cmt="CENT PERIPH"
 ```
 
+- `mrgsolve` is ADVAN13 by default
+- Also have 1- and 2- compartment in closed form
+- General compartment models on the horizon
+
 $PK
 =======
 
@@ -234,7 +240,7 @@ $PK
 $PK
 TVCL  = THETA(1) 
 ASCCL = TVCL * (IBW/70)**0.75
-CL    = ASCCL * EXP(ETA(1))\
+CL    = ASCCL * EXP(ETA(1))
 TVV1  = THETA(2) 
 ASCV1 = TVV1 * (WGT/70)**1
 V1    = ASCV1 * EXP(ETA(2))
@@ -436,6 +442,12 @@ Elements of Shiny
     - Generate outputs to be displayed in UI
     - Largely plain old `R` code written in server environment
 - Reactivity
+
+
+Get started example app
+=====================
+https://metrumrg.shinyapps.io/getstarted
+
 
 Explore Shiny with a flexdashboard
 ====================================
