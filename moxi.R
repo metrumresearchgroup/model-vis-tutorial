@@ -1,10 +1,11 @@
 library(mrgsolve)
 library(dplyr)
 library(ggplot2)
+library(tidyr)
 library(dmutate)
 
 # Load moxi_ode model
-mod <- mread("moxi_ode") %>% update(end=272)
+mod <- mread("moxi_ode", "moxi2") %>% update(end=272)
 
 
 # Just check out the model with 400 mg IV Qd x 10
@@ -49,3 +50,7 @@ out <-
 
 plot(out,log(IPRED) ~., subset=time <=72)
 
+
+auc <- filter(out, time==72) %>% gather(variable,value,AUC24:AUC72)
+
+ggplot(auc,aes(value,fill=variable)) + geom_density(alpha=0.5)

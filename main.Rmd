@@ -82,7 +82,7 @@ A dashboard gives access to decision makers
 
 
 
-What we need for the dashboard
+To build this dashboard, we need ...
 ========================================
 - Moxifloxacin PK model in agile format
     - Needs to be quick
@@ -477,7 +477,18 @@ Let's take a look at the Moxifloxacin code
 - `./moxi2/ui.R` and `./moxi2/server.R`
 
 
+Here's what I'd do
+=======
+1. Work out your model in a separate file
+    - Make sure it is doing what you think it is doing
+1. Work out the `R` code that will run your model
+    - Use functions that do one thing very well
+    - Hard code UI inputs and replace later with `input$name`
+1. Code UI and layout
+    - Tabsets, boxes, rows
+1. Fill in server code
 
+At each step, make incremental changes and re-run the code/app
 
 
 
